@@ -26,12 +26,14 @@ def build_squares(img):
 	return crop
 
 def get_hand_hist():
+	print("Start loading")
 	cam = cv2.VideoCapture(1)
 	if cam.read()[0]==False:
 		cam = cv2.VideoCapture(0)
 	x, y, w, h = 300, 100, 300, 300
 	flagPressedC, flagPressedS = False, False
 	imgCrop = None
+	print("Finished Loading")
 	while True:
 		img = cam.read()[1]
 		img = cv2.flip(img, 1)
@@ -47,6 +49,7 @@ def get_hand_hist():
 		elif keypress == ord('s'):
 			flagPressedS = True	
 			break
+
 		if flagPressedC:	
 			dst = cv2.calcBackProject([hsv], [0, 1], hist, [0, 180, 0, 256], 1)
 			dst1 = dst.copy()

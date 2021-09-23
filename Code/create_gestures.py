@@ -44,15 +44,17 @@ def store_images(g_id):
 	cam = cv2.VideoCapture(1)
 	if cam.read()[0]==False:
 		cam = cv2.VideoCapture(0)
+	
 	x, y, w, h = 300, 100, 300, 300
 
 	create_folder("gestures/"+str(g_id))
 	pic_no = 0
 	flag_start_capturing = False
 	frames = 0
+	print("Finished loding camera")
 	
 	while True:
-		img = cam.read()[1]
+		img = cam.read()[1] #
 		img = cv2.flip(img, 1)
 		imgHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 		dst = cv2.calcBackProject([imgHSV], [0, 1], hist, [0, 180, 0, 256], 1)
@@ -65,9 +67,17 @@ def store_images(g_id):
 		thresh = cv2.cvtColor(thresh, cv2.COLOR_BGR2GRAY)
 		thresh = thresh[y:y+h, x:x+w]
 		contours = cv2.findContours(thresh.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)[1]
-
+		#cv2.drawContours(img, contours, -1, (0, 255, 0), 3)
+		#cv2.imshow('Contours', img)
+		print(contours)
+		print(len(contours))
+		#cv2.imshow("Capturing gesture", img)
+		#cv2.imshow("thresh", thresh)
+		
 		if len(contours) > 0:
-			contour = max(contours, key = cv2.contourArea)
+			#contour = max(contours, key = cv2.contourArea)
+			contours = sorted(contours, key=cv2.contourArea, reverse=True)
+			contour = contours[0]
 			if cv2.contourArea(contour) > 10000 and frames > 50:
 				x1, y1, w1, h1 = cv2.boundingRect(contour)
 				pic_no += 1
