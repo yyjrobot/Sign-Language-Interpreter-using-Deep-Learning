@@ -66,18 +66,27 @@ def store_images(g_id):
 		thresh = cv2.merge((thresh,thresh,thresh))
 		thresh = cv2.cvtColor(thresh, cv2.COLOR_BGR2GRAY)
 		thresh = thresh[y:y+h, x:x+w]
-		contours = cv2.findContours(thresh.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)[1]
+		contours  = cv2.findContours(thresh.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)[0]
+		hierarchy = cv2.findContours(thresh.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)[0]
 		#cv2.drawContours(img, contours, -1, (0, 255, 0), 3)
 		#cv2.imshow('Contours', img)
-		print(contours)
-		print(len(contours))
+		#print(contours)
+		#print(hierarchy)
+		#print(len(contours))
 		#cv2.imshow("Capturing gesture", img)
 		#cv2.imshow("thresh", thresh)
-		
+		#input("wait ofr input")
 		if len(contours) > 0:
 			#contour = max(contours, key = cv2.contourArea)
-			contours = sorted(contours, key=cv2.contourArea, reverse=True)
-			contour = contours[0]
+			#contours = sorted(contours, key=cv2.contourArea, reverse=True)
+			#contour = contours[0]
+			max_area = 0
+			for i in range(len(contours)):
+				area = cv2.contourArea(contours[i])
+				if area > max_area:
+					contour = contours[i]
+					max_area = area
+
 			if cv2.contourArea(contour) > 10000 and frames > 50:
 				x1, y1, w1, h1 = cv2.boundingRect(contour)
 				pic_no += 1
